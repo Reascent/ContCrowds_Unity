@@ -78,40 +78,19 @@ public class Unit : MonoBehaviour {
     float fmin = 0.01f, fmax = 500.0f;
     float agentSpeedMod;
     Vector3 startingPosition;
-    //public Vector2 oldWayPoint;
-    //public Vector2 currentWayPoint;
-    //public Vector2 newWayPoint;
 
     void Start() {
-       // universalUnitID = numOfUnits++;
         _grid = FindObjectOfType<Grid>();
         agentSpeedMod = Random.value;
         _groupManager = FindObjectOfType<GroupManager>();
-        //agentPosition = startPos = oldWayPoint = currentWayPoint = newWayPoint = GetPosition();
         agentPosition =  GetPosition();
         startingPosition = new Vector3(agentPosition.x, 0.1f, agentPosition.y);
         agentDirection = new Vector2(1, 0);
         agentSpeed = 0.0f;
-        //sampleOffset = new Vector2(0.5f, 0.5f);
-        //agentDirection.Set( 1, 0 );
         transform.forward = Vector3.Normalize(new Vector3(agentDirection.x, 0.0f, agentDirection.y));
-        //agentDirection.Normalize();
         deltaTime = 1.0f / 33.0f;
         StartCoroutine(InitParams());
     }
-    //void Update()
-    //{
-    //    deltaTime = Time.deltaTime;
-    //    deltaTime = Time.smoothDeltaTime;
-    //    deltaTime = Time.maximumDeltaTime;
-    //    deltaTime = Time.fixedDeltaTime;
-    //    deltaTime = 1.0f / 33.0f;
-    //}
-
-    //void Update()
-    //{
-    //    fmax = 2.5f + agentSpeedMod * _groupManager.ccnmb[group.groupID].Fmax;
-    //}
 
     private bool _allInitiated = false;
     private IEnumerator InitParams()
@@ -169,7 +148,6 @@ public class Unit : MonoBehaviour {
             {
                 // Park it
                 isParked = true;
-                //transform.position = new Vector3(-50.0f, 0, -50.0f);
                 AgentPosition = parkPosition;
                 yield break;
             }
@@ -209,22 +187,11 @@ public class Unit : MonoBehaviour {
 
                 isInsideWall = float.IsInfinity(gradient.x) || float.IsInfinity(gradient.y)
                 || float.IsNaN(gradient.x) || float.IsNaN(gradient.y);
-                //if (isInsideWall)
-                //{
-                //    Debug.Log("damn1");
-                //}
-
+  
                 // Check if both components are zero, if so gradient is invalidd, from
                 // all infinite potentials, or from goal areas
 
                 bool isInsideInvalidEdge = (gradient.x == 0.0f && gradient.y == 0.0f);
-                //if (isInsideInvalidEdge)
-                //{
-                //    Debug.Log("damn2");
-                //}
-                //
-                // Check if the agent stepped into an exit (0 potential) cell
-                //
 
                 float potential = potentialField[gridPositionWithOffset];
 
@@ -242,8 +209,6 @@ public class Unit : MonoBehaviour {
                     {
                         isParked = true;
                         AgentPosition = parkPosition;
-                        //TransformUnitPosition(parkPosition, new Vector2(1f, 0f));
-                        //transform.position = new Vector3(-1000f, 0, -1000f);
                     }
                     yield break;
                 }
@@ -255,11 +220,9 @@ public class Unit : MonoBehaviour {
 
                     bool isFacingWall = isInsideWall || isInsideInvalidEdge;
 
-                    //
                     // We are only interested in the direction of the gradient.
                     // The new direction points opposite of the gradient.
                     // The agent moves against the gradient towards the goal.
-                    //
 
                     Vector2 targetDirection = -gradient.normalized;
 
@@ -267,7 +230,6 @@ public class Unit : MonoBehaviour {
                     // we turn around
 
                     targetDirection = isFacingWall ? -direction : targetDirection;
-
 
                     float dotProduct = Vector2.Dot(targetDirection, direction);
 
@@ -335,44 +297,16 @@ public class Unit : MonoBehaviour {
 
                     newPosition = isNewPositionInsideWall ? position : newPosition;
                     speed = isNewPositionInsideWall ? 0.0f : speed;
-                    //if (isNewPositionInsideWall)
-                    //{
-                    //    Debug.Log("damn3");
-                    //}
-                    //
-                    // Write new position, direction and speed
-                    //
-
-                    //if (newPosition == agentPosition)
-                    //{
-                    //    curUnmovedCount++;
-                    //    if (curUnmovedCount == maxUnmovedCount)
-                    //    {
-                    //        isParked = true;
-                    //        newPosition = parkPosition;
-                    //        speed = 0f;
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    curUnmovedCount = 0;
-                    //}
 
                     agentDirection = newDirection.normalized;
                     agentSpeed = speed;
                     agentPosition = newPosition;
-
-                    //TransformUnitPosition(newPosition, newDirection);
-                    //transform.forward = (new Vector3(newDirection.x, 0, newDirection.y)).normalized;
-                    //transform.position = new Vector3(newPosition.x, 0.0f, newPosition.y);
                 }
             }
         }
         else
         {
-            //
             // Deal with parked agents
-            //
             if (_groupManager.ImmediateRestart)
             {
                 ResetUnitToStartPosition();
@@ -381,8 +315,6 @@ public class Unit : MonoBehaviour {
             {
                 isParked = true;
                 AgentPosition = parkPosition;
-                //TransformUnitPosition(parkPosition, new Vector2(1f, 0f));
-                //transform.position = new Vector3(-50.0f, 0, -50.0f);
             }
             yield break;
         }
@@ -393,9 +325,7 @@ public class Unit : MonoBehaviour {
     private Vector2 TurnToDirection(Vector2 direction, Vector2 targetDirection
         , float dotProduct, float turnRate)
     {
-        //
         // Slowly turn towards new direction
-        //
 
         Vector2 newDirection;
 
@@ -411,7 +341,6 @@ public class Unit : MonoBehaviour {
             // Turn towards the left
             Vector2 orthogonalDirection = new Vector2(-direction.y, direction.x);
 
-            //
             // Check if we need to reverse orthogonalDirection in case we rotate into a wall
             // This is about 13 seconds faster on original test scene
             //--------------------------
@@ -440,11 +369,8 @@ public class Unit : MonoBehaviour {
             Vector2 directionOffset = targetDirection - direction;
             float directionOffsetLength = directionOffset.magnitude;
 
-            //
             // Ensure that the agent does not turn faster than the turn rate allows.
-            //
             // Covers against zero directionOffsetLength if turnRate is zero or greater.
-            //
 
             if (directionOffsetLength > turnRate)
             {
@@ -463,9 +389,7 @@ public class Unit : MonoBehaviour {
 
     private float GetTurnRate(float turnRate, float dotProduct, bool isFacingWall)
     {
-        //
         // Choose faster turn rate if we are facing wall or trying to turn around
-        //
 
         bool isTurningAround = dotProduct < 0.6f;
 
@@ -519,14 +443,10 @@ public class Unit : MonoBehaviour {
     }
 
     private float interpolateBetweenValues() {
-        //int bottomLeftX = (int)Mathf.Floor(transform.position.x);
-        //int bottomLeftY = (int)Mathf.Floor(transform.position.z);
         Node curNode = _grid.NodeFromWorldPoint(transform.position);
         int gridPosX = curNode.gridX;
         int gridPosY = curNode.gridY;
         Vector3 bottomLeft = _grid.NodeFromWorldPoint(transform.position).worldPosition;
-        //bottomLeft.x -= grid.nodeRadius;
-        //bottomLeft.z -= grid.nodeRadius;
 
         float xAmountRight = transform.position.x - bottomLeft.x;
         float xAmountLeft = _grid.nodeRadius * 2 - Mathf.Abs(xAmountRight);
@@ -649,10 +569,7 @@ public class Unit : MonoBehaviour {
         agentPosition = GetPosition();
         agentDirection = new Vector2(1, 0);
         agentSpeed = 0.0f;
-        //sampleOffset = new Vector2(0.5f, 0.5f);
-        //agentDirection.Set( 1, 0 );
         transform.forward = Vector3.Normalize(new Vector3(agentDirection.x, 0.0f, agentDirection.y));
-        //agentDirection.Normalize();
     }
 
     public void UpdateTransformPosition()
