@@ -1,4 +1,4 @@
-# Continuum Crowds 
+# Continuum Crowds Unity Simulator
 The Continuum Crowds algorithm is a realtime model for crowd movement that is based on fluid dynamics and wave propagation. The model uses a dynamic potential field with global navigation and obstacle avoidance such as other agents.
 
 This approach is directly related to the 2002 Huges model for crowd movement.
