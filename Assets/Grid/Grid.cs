@@ -32,26 +32,6 @@ public class Grid : MonoBehaviour {
 
     public float maxVecLen = Mathf.NegativeInfinity;
 
-    //private static Grid instance;
-    //private Grid() { }
-    //public static void Create() { // (int sizeX, int sizeY, float diameter)
-    //    if (instance == null) {
-    //        instance = new Grid(int sizeX, int sizeY, float diameter)
-    //    }
-    //    else
-    //        return instance;
-    //}
-    //public static Grid Instance {
-    //    get {
-    //        if (instance == null) {
-    //            instance = new Grid(int sizeX, int sizeY, float diameter)
-    //            return instance;
-    //        }
-    //        else
-    //            return instance;
-    //    }
-    //}
-
     // Use this for initialization
     void Awake () {
         nodeDiameter = nodeRadius * 2;
@@ -78,10 +58,6 @@ public class Grid : MonoBehaviour {
 	
     void CreateGrid() {
         grid = new Node[gridSizeX * gridSizeY];
-        
-        //Vector2 v2SampleStart = new Vector2(1, 1);
-        //Noise noise = new Noise();
-        //float xCoord, zCoord;
 
         // Get bottom left corner of grid: (0,0,0)   -   (1,0,0)     * midpointOfGrid.x    - (0,0,1)         * midpointOfGrid.y; 
         worldBottomLeft = transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.forward * gridWorldSize.y / 2;
@@ -90,9 +66,6 @@ public class Grid : MonoBehaviour {
         // Setup grids
         for (int x = 0; x < gridSizeX; x++) {
             for (int y = 0; y < gridSizeY; y++) {
-
-                //xCoord = v2SampleStart.x + x * nodeDiameter * scale;
-                //zCoord = v2SampleStart.y + y * nodeDiameter * scale;
 
                 // Set bottom left position of each Node on the grid
                 Vector3 worldPoint = worldBottomLeft + 
@@ -103,22 +76,17 @@ public class Grid : MonoBehaviour {
                 bool walkable = !(Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask)); //PHYSICS!!!!!!!!!! HORY CLAP
                 float height = 0;
                 if (x == 0 || x == gridSizeX - 1 || y == 0 || y == gridSizeY - 1) {
-                    //walkable = false;
                     height = 0;
                     grid[x + gridSizeX * y] = new Node(false, worldPoint, x, y, height);
                 }
                 else {
-                    //walkable = true;
                     height = 0;
                     grid[x + gridSizeX * y] = new Node(walkable, worldPoint, x, y, height);
                 }
-                //grid[x, y] = new Node(walkable, worldPoint, x, y, height);
                 if (!walkable)
                     grid[x + gridSizeX * y].unitCost = Mathf.Infinity;
-                //grid[x, y] = new Node(walkable, worldPoint, x, y, power * noise.noise2(xCoord, zCoord));
             }
         }
-        //SetHeights();
     }
 
 
@@ -144,9 +112,9 @@ public class Grid : MonoBehaviour {
     }
     public float getDirectedNodeGradient(int xFrom, int yFrom, int xTo, int yTo) {
         if (!(xFrom >= 0 && xFrom < gridSizeX) || !(yFrom >= 0 && yFrom < gridSizeY))
-            return 0;//Mathf.NegativeInfinity;
+            return 0;
         if (!(xTo >= 0 && xTo < gridSizeX) || !(yTo >= 0 && yTo < gridSizeY))
-            return 0;//Mathf.Infinity;
+            return 0;
         return this[xFrom, yFrom].height - this[xTo, yTo].height;
     }
 
@@ -229,7 +197,6 @@ public class Grid : MonoBehaviour {
     }
 
     float fmin = 0.1f, fmax = 5.0f, smin = -10.0f, smax = 10.0f, densityMin = 0, densityMax = 10.0f, flowspeedmin = 0.001f;
-    //float fmin = 0.001f, fmax = 12.0f, smin = -10.0f, smax = 10.0f, densityMin = 0.5f, densityMax = 0.8f, flowspeedmin = 0.001f;
 
     public float getDirectedSpeed(int xFrom, int yFrom, int xTo, int yTo, int direction) {
         float tempSpeed = fmax + (getDirectedNodeGradient(xFrom, yFrom, xTo, yTo) - smin) / (smax - smin) * (fmin - fmax);
@@ -327,27 +294,6 @@ public class Grid : MonoBehaviour {
         return neighbours;
     }
 
-    //// Get list of straight neighbouring nodes
-    //public List<Node> GetNeighboursImmediate(Node node) {
-    //    List<Node> neighbours = new List<Node>();
-
-    //    //search block of 4 immediate nodes
-    //    for (int x = -1; x <= 1; x++) {
-    //        for (int y = -1; y <= 1; y++) {
-    //            if (Mathf.Abs(x) == Mathf.Abs(y))
-    //                continue;
-
-    //            int checkX = node.gridX + x;
-    //            int checkY = node.gridY + y;
-
-    //            if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY) {
-    //                neighbours.Add(grid[checkX, checkY]);
-    //            }
-    //        }
-    //    }
-
-    //    return neighbours;
-    //}
     //Get list of straight neighbouring nodes
     private Node[] neighbours = new Node[4];
     public Node[] GetNeighboursImmediate(Node node) {
@@ -399,8 +345,6 @@ public class Grid : MonoBehaviour {
     public Node this[int x, int y] {
         get {
             if (x < 0 || y < 0 || x >= gridSizeX || y >= gridSizeY) {
-                //outOfBoundsNode.gridX = x;
-                //outOfBoundsNode.gridY = y;
                 return outOfBoundsNode;
             }
             else return grid[x + gridSizeX * y];
@@ -410,11 +354,8 @@ public class Grid : MonoBehaviour {
     public Node this[int x] {
         get {
             if (x < 0 || x >= gridSizeX * gridSizeY) {
-                //outOfBoundsNode.gridX = x;
-                //outOfBoundsNode.gridY = y;
                 return outOfBoundsNode;
             }
-            //return grid[x % gridSizeX, x / gridSizeY];
             return grid[x];
         }
     }
@@ -431,10 +372,7 @@ public class Grid : MonoBehaviour {
         maxHeight = 0;
         minHeight = Mathf.Infinity;
 
-        //Random.seed = randomSeedS;
         v2SampleStart = new Vector2(Random.Range(0.0f, (float)gridSizeX), Random.Range(0.0f, (float)gridSizeY));
-        //Vector2 v2SampleStart = new Vector2(1, 1);
-        //Vector2 v2SampleStart = new Vector2(1,1);
         Noise noise = new Noise();
         float xCoord, zCoord;
         for (int z = 0; z < gridSizeX; z++) {
@@ -456,8 +394,6 @@ public class Grid : MonoBehaviour {
             }
         }
         maxHeight -= minHeight;
-        // set min height to 0
-        //minHeight = minHeight < 0 ? minHeight : -minHeight;
         for (int z = 0; z < gridSizeX; z++) {
             for (int x = 0; x < gridSizeY; x++) {
                 this[x, z].height -= minHeight;
@@ -465,57 +401,6 @@ public class Grid : MonoBehaviour {
         }
 
     }
-
-
-    //void OnDrawGizmos() {
-    //    Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
-    //        // Draw cube - white on walkable node and red on unwalkable node, draw where player is
-    //    if (grid != null && displayGridGizmos == true) {
-    //        TileMap tileMap = AStar.FindObjectOfType<TileMap>();
-    //        Vector3 from = new Vector3();
-    //        Vector3 to = new Vector3();
-    //        foreach (Node n in grid) {
-    //            //Gizmos.color = (n.isWalkable) ? Color.white : Color.red;
-    //            float colorIntensity = n.height / maxHeight;// (float)(Node.count);
-    //            //Vector4 color = new Vector4(colorIntensity, colorIntensity, colorIntensity, 1);
-    //            //Gizmos.color = (n.isWalkable) ? (Color)color : Color.red;
-    //            // Draw path
-                
-    //            if (n.parent != null && n.isWalkable == true) {
-    //                //Node pr = n.parent;
-    //                //from.Set(n.worldPosition.x, n.height, n.worldPosition.z);
-    //                //to.Set(pr.worldPosition.x,pr.height,pr.worldPosition.z);
-    //                float nodeHeight;
-    //                if (tileMap.perlinGen)
-    //                    nodeHeight = n.height;
-    //                else
-    //                    nodeHeight = 0;
-
-    //                from.Set(grid[n.gridX,n.gridY].worldPosition.x, nodeHeight, grid[n.gridX, n.gridY].worldPosition.z);
-
-    //                float x1 = grid[n.gridX + 1, n.gridY].isWalkable && grid[n.gridX + 1, n.gridY].potentialCost != Mathf.Infinity ?
-    //                    grid[n.gridX + 1, n.gridY].potentialCost : grid[n.gridX, n.gridY].potentialCost;
-    //                float x2 = grid[n.gridX - 1, n.gridY].isWalkable && grid[n.gridX - 1, n.gridY].potentialCost != Mathf.Infinity ?
-    //                    grid[n.gridX - 1, n.gridY].potentialCost : grid[n.gridX, n.gridY].potentialCost;
-    //                float y1 = grid[n.gridX, n.gridY + 1].isWalkable && grid[n.gridX, n.gridY + 1].potentialCost != Mathf.Infinity ?
-    //                    grid[n.gridX, n.gridY + 1].potentialCost : grid[n.gridX, n.gridY].potentialCost;
-    //                float y2 = grid[n.gridX, n.gridY - 1].isWalkable && grid[n.gridX, n.gridY - 1].potentialCost != Mathf.Infinity ?
-    //                    grid[n.gridX, n.gridY - 1].potentialCost : grid[n.gridX, n.gridY].potentialCost;
-
-    //                float diffX = x1 - x2;
-    //                float diffY = y1 - y2;
-    //                Vector2 normDiff = new Vector2(diffX, diffY);
-    //                normDiff.Normalize();
-    //                to.Set(grid[n.gridX, n.gridY].worldPosition.x - normDiff.x/1.0f, nodeHeight, grid[n.gridX, n.gridY].worldPosition.z - normDiff.y/1.0f);
-
-    //                Gizmos.DrawLine(from, to);//from + new Vector3(0, 0, -nodeRadius));
-    //                Gizmos.color = new Vector4(1, 0, 0, 1);
-    //            }
-    //            //Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - .1f));
-    //        }
-    //    }
-    //}
-   
 
     public float getMaxGCost() {
         float maxGCost = 0;
@@ -527,6 +412,4 @@ public class Grid : MonoBehaviour {
         }
         return maxGCost;
     }
-
-
 }
