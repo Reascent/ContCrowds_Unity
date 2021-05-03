@@ -6,7 +6,7 @@ The Continuum Crowds algorithm is a realtime model for crowd movement that is ba
 
 This approach is directly related to the 2002 Huges model for crowd movement.
 
-Continuum Crowds uses the Huges model to create flow map to nagivate a group of agents to a shared goal.
+Continuum Crowds uses the Huges model to a create flow map to nagivate a group of agents to a shared goal.
 The model uses a 'discomfort field' that is based on the agents' density, average velocity and speed as well as the area's local cost, potential and gradient in a way similar to Dijkstra, called the Fast Marching Method. The difference in wave propagation can be seen in the following image, with 4-way Dijkstra on top and FMM at the bottom:
 
 <div align="center">
